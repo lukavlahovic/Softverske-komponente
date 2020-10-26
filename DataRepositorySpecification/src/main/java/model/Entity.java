@@ -5,6 +5,7 @@ import java.util.ArrayList;
 public class Entity {
 
     private String name;
+    private int id;
     private ArrayList<Attribute> attributes;
 
     public Entity(String name)
