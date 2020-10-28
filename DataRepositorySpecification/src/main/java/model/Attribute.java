@@ -4,10 +4,16 @@ public class Attribute {
 
     private String name;
     private Entity entity;
+    private String value;
 
-    public Attribute(String name)
+    public Attribute(){
+        super();
+    }
+
+    public Attribute(String name,String value)
     {
         this.name = name;
+        this.value = value;
     }
 
     public Attribute(Entity entity)
@@ -15,6 +21,11 @@ public class Attribute {
         this.entity = entity;
     }
 
+    public String getName() {
+        return name;
+    }
 
-
+    public String getValue() {
+        return value;
+    }
 }
