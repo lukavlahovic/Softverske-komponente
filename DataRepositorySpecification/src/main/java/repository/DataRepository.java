@@ -1,5 +1,6 @@
 package repository;
 
+import java.util.HashMap;
 import java.util.List;
 
 public interface DataRepository {
@@ -31,4 +32,18 @@ public interface DataRepository {
      */
     <T> List<T> findAll(String collection, Class<T> type);
 
+    /**
+     *
+     * @param collection name of the collection
+     * @param id         index
+     */
+    void delete(String collection, int id);
+
+    /**
+     *
+     * @param collection name of the collection
+     * @param id         index of Entity
+     * @param newData    HashMap with changed values
+     */
+    void update(String collection, int id,HashMap<Object,Object> newData);
 }

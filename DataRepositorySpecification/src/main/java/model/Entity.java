@@ -1,17 +1,23 @@
 package model;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Entity {
 
     private String name;
     private int id;
-    private ArrayList<Attribute> attributes;
+    private HashMap<Object,Object> attributes;
 
-    public Entity(String name)
+    public Entity()
+    {
+        super();
+    }
+    public Entity(String name, int id)
     {
         this.name = name;
-        attributes = new ArrayList<Attribute>();
+        this.id = id;
+        attributes = new HashMap<>();
     }
 
     public String getName() {
@@ -22,16 +28,18 @@ public class Entity {
         this.name = name;
     }
 
-    public ArrayList<Attribute> getAttributes() {
+    public HashMap<Object, Object> getAttributes() {
         return attributes;
     }
 
-    public void setAttributes(ArrayList<Attribute> attributes) {
+    public int getId(){ return id; }
+
+    public void setAttributes(HashMap attributes) {
         this.attributes = attributes;
     }
 
     @Override
     public String toString() {
-        return name;
+        return Integer.toString(id);
     }
 }
