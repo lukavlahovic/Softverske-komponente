@@ -38,12 +38,27 @@ public class CustomDataRepository implements repository.DataRepository {
     }
 
     @Override
-    public void delete(String s, int i) {
-
+    public void delete(String s, int id) {
+        List<Entity> objects = parser.reader(new File(s));
+        for(Entity entity : objects){
+            if(entity.getId()==id) {
+                objects.remove(entity);
+                break;
+            }
+        }
+        parser.writer(new File(s), objects);
     }
 
     @Override
-    public void update(String s, int i, HashMap<Object, Object> hashMap) {
+    public void update(String s, int id, HashMap<Object, Object> updatedMap) {
 
+        List<Entity> objects = parser.reader(new File(s));
+        for(Entity entity : objects){
+            if(entity.getId()==id) {
+                updatedMap.forEach((key,value)-> entity.getAttributes().put(key,value));
+                break;
+            }
+        }
+        parser.writer(new File(s), objects);
     }
 }

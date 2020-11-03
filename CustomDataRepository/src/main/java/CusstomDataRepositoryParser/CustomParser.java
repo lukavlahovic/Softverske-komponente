@@ -26,7 +26,23 @@ public class CustomParser {
                             + "\t" + "id" + ":" + ((Entity) obj).getId() + ";" + "\n"
                             + "\t" + "attributes" + ":" + "\n" + "\t" + "\t" +"@array:" + "\n";
                     for (Map.Entry<Object, Object> entry : ((Entity) obj).getAttributes().entrySet()) {
-                        text += "\t" + "\t" + (String) entry.getKey() + ":" + (String) entry.getValue() + ";" + "\n";
+
+                        if(!(entry.getValue() instanceof Entity))
+                            text += "\t" + "\t" + (String) entry.getKey() + ":" + (String) entry.getValue() + ";" + "\n";
+                        else
+                        {
+                            text += "\t" + "\t" + (String) entry.getKey() + ":"+"\n";
+                            text += "\t" + "\t" +  "name" + ":" + ((Entity) entry.getValue()).getName() + ";" + "\n"
+                                    + "\t" + "\t" +  "id" + ":" + ((Entity) entry.getValue()).getId() + ";" + "\n"
+                                    + "\t" + "\t" +  "attributes" + ":" + "\n" + "\t" + "\t" +  "\t" +"@array:" + "\n";
+                            for (Map.Entry<Object, Object> entry1 : ((Entity) entry.getValue()).getAttributes().entrySet()) {
+
+
+                                text += "\t" + "\t" + "\t" +  (String) entry1.getKey() + ":" + (String) entry1.getValue() + ";" + "\n";
+
+                            }
+
+                        }
                     }
                     text += "\t" + "\t" + "$array;" + "\n";
                 }

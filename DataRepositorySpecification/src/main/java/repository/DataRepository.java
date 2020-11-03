@@ -1,5 +1,9 @@
 package repository;
 
+import model.Entity;
+import model.SearchParameters;
+
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -21,7 +25,7 @@ public interface DataRepository {
      * @param type       type of the object
      * @return object with specified id
      */
-    <T> T findById(String collection, String id, Class<T> type);
+    ArrayList<Entity> find(SearchParameters parameters);
 
     /**
      * Get all objects from specified collection
