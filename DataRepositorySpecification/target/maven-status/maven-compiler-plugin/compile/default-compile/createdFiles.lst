@@ -1,3 +1,5 @@
-repository/DataRepository.class
-model/Entity.class
-model/SearchParameters.class
+repository\DataRepository.class
+model\SearchParameters.class
+repository\SearchInterface.class
+model\Entity.class
+repository\Search.class

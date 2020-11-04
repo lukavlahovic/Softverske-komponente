@@ -2,6 +2,8 @@ package CustomDataRepository;
 
 import CusstomDataRepositoryParser.CustomParser;
 import model.Entity;
+import model.SearchParameters;
+import repository.Search;
 
 import java.io.File;
 import java.io.IOException;
@@ -12,6 +14,8 @@ import java.util.List;
 public class CustomDataRepository implements repository.DataRepository {
 
     CustomParser parser = new CustomParser();
+    Search customSearch = new Search();
+
     @Override
     public void save(String s, Object o) {
 
@@ -28,9 +32,11 @@ public class CustomDataRepository implements repository.DataRepository {
     }
 
     @Override
-    public <T> T findById(String s, String s1, Class<T> aClass) {
-        return null;
+    public ArrayList<Entity> find(SearchParameters searchParameters) {
+        List<Entity> entities = parser.reader(new File("D:\\json_baza\\test.json"));
+        return customSearch.find(entities,searchParameters);
     }
+
 
     @Override
     public <T> List<T> findAll(String s, Class<T> aClass) {
