@@ -33,7 +33,7 @@ public class CustomDataRepository implements repository.DataRepository {
 
     @Override
     public ArrayList<Entity> find(SearchParameters searchParameters) {
-        List<Entity> entities = parser.reader(new File("D:\\json_baza\\test.json"));
+        List<Entity> entities = parser.reader(new File("D:\\custom.txt"));
         return customSearch.find(entities,searchParameters);
     }
 

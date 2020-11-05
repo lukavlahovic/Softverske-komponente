@@ -54,7 +54,7 @@ public class YamlDataRepository implements DataRepository {
     public ArrayList<Entity> find(SearchParameters searchParameters) {
 
         try {
-            List<Entity> entities = mapper.readValue(new File("D:\\json_baza\\yaml.yml"), new TypeReference<List<Entity>>() {
+            List<Entity> entities = mapper.readValue(new File("D:\\yaml.yml"), new TypeReference<List<Entity>>() {
             });
             return yamlSearch.find(entities,searchParameters);
         } catch (IOException e) {
