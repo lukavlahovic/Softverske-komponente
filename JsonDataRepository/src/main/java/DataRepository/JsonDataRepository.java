@@ -7,7 +7,9 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import model.Entity;
+import model.SearchParameters;
 import repository.DataRepository;
+import repository.Search;
 
 import java.io.File;
 import java.io.IOException;
@@ -16,6 +18,7 @@ import java.util.*;
 public class JsonDataRepository implements DataRepository {
 
     private ObjectMapper objectMapper = new ObjectMapper();
+    Search jsonSearch = new Search();
 
     @Override
     public void save(String s, Object entity) {
@@ -37,9 +40,18 @@ public class JsonDataRepository implements DataRepository {
     }
 
     @Override
-    public <T> T findById(String s, String s1, Class<T> aClass) {
+    public ArrayList<Entity> find(SearchParameters searchParameters) {
+        try {
+            List<Entity> entities = objectMapper.readValue(new File("D:\\json_baza\\test.json"), new TypeReference<List<Entity>>() {
+            });
+
+            return jsonSearch.find(entities,searchParameters);
+        } catch (IOException e) {
+            //e.printStackTrace();
+        }
         return null;
     }
+
 
     @Override
     public <T> List<T> findAll(String s, Class<T> aClass) {
