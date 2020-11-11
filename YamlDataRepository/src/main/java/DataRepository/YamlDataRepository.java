@@ -42,7 +42,7 @@ public class YamlDataRepository implements DataRepository {
             }
             catch (Exception exception)
             {
-                exception.printStackTrace();
+               // exception.printStackTrace();
             }
            // e.printStackTrace();
         }
@@ -58,7 +58,7 @@ public class YamlDataRepository implements DataRepository {
             });
             return yamlSearch.find(entities,searchParameters);
         } catch (IOException e) {
-            e.printStackTrace();
+           // e.printStackTrace();
         }
         return null;
     }
@@ -83,7 +83,7 @@ public class YamlDataRepository implements DataRepository {
             }
             mapper.writeValue(new File(s), objects);
         } catch (IOException e) {
-            e.printStackTrace();
+            //e.printStackTrace();
         }
     }
 
@@ -101,7 +101,7 @@ public class YamlDataRepository implements DataRepository {
             }
             mapper.writeValue(new File(s), objects);
         } catch (IOException e) {
-            e.printStackTrace();
+            //e.printStackTrace();
         }
     }
 }

@@ -9,13 +9,14 @@ import java.util.List;
 
 public interface DataRepository {
 
+    ArrayList<Entity> loadRepository(String path);
     /**
      * Save object in the specified collection of the storage.
      *
      * @param collection name of the collection
      * @param object     data
      */
-    void save(String collection, Object object);
+    void save(String pathToDirectory, Object object, String pathToProperties);
 
     /**
      * Get the object with the specified id.
