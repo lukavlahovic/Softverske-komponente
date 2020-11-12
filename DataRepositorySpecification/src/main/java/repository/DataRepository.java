@@ -16,7 +16,7 @@ public interface DataRepository {
      * @param collection name of the collection
      * @param object     data
      */
-    void save(String pathToDirectory, Object object, String pathToProperties);
+    boolean save(String pathToDirectory, Object object, String pathToProperties);
 
     /**
      * Get the object with the specified id.

@@ -14,7 +14,8 @@ public abstract class SearchInterface {
     }
 
     public boolean entityIdSearch(Entity entity,SearchParameters searchParameters){
-        return Integer.toString(entity.getId()).equals(searchParameters.getEntityId());
+        //return Integer.toString(entity.getId()).equals(searchParameters.getEntityId());
+        return entity.getId()==(Integer.parseInt(searchParameters.getEntityId()));
     }
 
     /**
@@ -195,6 +196,10 @@ public abstract class SearchInterface {
                         break;
                     }
                 }
+                else {
+                    notFound = true;
+                    break;
+                }
             }
             else
             {
@@ -253,6 +258,10 @@ public abstract class SearchInterface {
                         notFound = true;
                         break;
                     }
+                }
+                else{
+                    notFound=true;
+                    break;
                 }
             }
             else
@@ -340,6 +349,7 @@ public abstract class SearchInterface {
     public ArrayList<Entity> find(List<Entity> entities, SearchParameters searchParameters){
         ArrayList<Entity> result = new ArrayList<Entity>();
         boolean isOr = searchParameters.getAndOr().equals("or");
+        boolean notFound=false;
         for(Entity entity: entities)
         {
             if(searchParameters.getEntityName()!=null)
@@ -366,90 +376,91 @@ public abstract class SearchInterface {
                     continue;
                 }
             }
-            if (searchParameters.getEquals()!=null)
+            if (!searchParameters.getEquals().equals(""))
             {
-                boolean notFound = equalsSearch(entity,searchParameters);
-                if(notFound)
+                notFound = equalsSearch(entity,searchParameters);
+                if(notFound && !isOr)
                 {
 
                     continue;
                 }
-                else if(isOr)
+                else if(!notFound && isOr)
                 {
                     result.add(entity);
                     continue;
                 }
             }
-            if(searchParameters.getStartsWith()!=null)
+            if(!searchParameters.getStartsWith().equals(""))
             {
-                boolean notFound = startsWithSearch(entity,searchParameters);
-                if(notFound)
+                notFound = startsWithSearch(entity,searchParameters);
+                if(notFound && !isOr)
                 {
 
                     continue;
                 }
-                else if(isOr)
+                else if(!notFound && isOr)
                 {
                     result.add(entity);
                     continue;
                 }
             }
-            if(searchParameters.getEndsWith()!=null)
+            if(!searchParameters.getEndsWith().equals(""))
             {
-                boolean notFound = endsWithSearch(entity,searchParameters);
-                if(notFound)
+                notFound = endsWithSearch(entity,searchParameters);
+                if(notFound && !isOr)
                 {
 
                     continue;
                 }
-                else if(isOr)
+                else if(!notFound && isOr)
                 {
                     result.add(entity);
                     continue;
                 }
             }
-            if(searchParameters.getGreaterThan()!=null)
+            if(!searchParameters.getGreaterThan().equals(""))
             {
-                boolean notFound = greaterThanSearch(entity,searchParameters);
-                if(notFound)
+                notFound = greaterThanSearch(entity,searchParameters);
+                if(notFound && !isOr)
                 {
 
                     continue;
                 }
-                else if(isOr)
+                else if(!notFound && isOr)
                 {
                     result.add(entity);
                     continue;
                 }
             }
-            if(searchParameters.getLesserThan()!=null)
+            if(!searchParameters.getLesserThan().equals(""))
             {
-                boolean notFound = lesserThanSearch(entity,searchParameters);
-                if(notFound)
+                notFound = lesserThanSearch(entity,searchParameters);
+                if(notFound && !isOr)
                 {
 
                     continue;
                 }
-                else if(isOr)
+                else if(!notFound && isOr)
                 {
                     result.add(entity);
                     continue;
                 }
             }
-            if(searchParameters.getNot()!=null){
-                boolean notFound = notSearch(entity,searchParameters);
-                if(notFound)
+            if(!searchParameters.getNot().equals("")){
+                notFound = notSearch(entity,searchParameters);
+                if(notFound && !isOr)
                 {
 
                     continue;
                 }
-                else if(isOr)
+                else if(!notFound && isOr)
                 {
                     result.add(entity);
                     continue;
                 }
             }
-            result.add(entity);
+            if(!notFound)
+                result.add(entity);
         }
         return result;
     }

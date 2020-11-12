@@ -23,7 +23,6 @@ public class JsonDataRepository implements DataRepository {
     public ArrayList<Entity> loadRepository(String path) {
         File directoryPath = new File(path);
         File filesList[] = directoryPath.listFiles();
-        //System.out.println("List of files and directories in the specified directory:");
         ArrayList<Entity> allEntities = new ArrayList<>();
         for(File file : filesList) {
             try {
@@ -31,19 +30,20 @@ public class JsonDataRepository implements DataRepository {
                 });
                 allEntities.addAll(objects);
             } catch (IOException e) {
-
+                e.printStackTrace();
             }
         }
         return allEntities;
     }
 
     @Override
-    public void save(String pathToDirectory, Object entity, String pathToConfig) {
+    public boolean save(String pathToDirectory, Object entity, String pathToConfig) {
         Properties properties = new Properties();
         FileReader reader= null;
         try {
             reader = new FileReader(pathToConfig);
             properties.load(reader);
+            reader.close();
         } catch (FileNotFoundException e) {
             //e.printStackTrace();
         } catch (IOException e) {
@@ -52,24 +52,33 @@ public class JsonDataRepository implements DataRepository {
         if (properties.getProperty("autoGenerateId").equals("false"))
         {
             SearchParameters sp = new SearchParameters();
+            sp.setAndOr("or");
             sp.setEntityId(Integer.toString(((Entity)entity).getId()));
 
-            if(!find(sp,pathToDirectory).isEmpty())
-            {
-                System.out.println("Entitet sa datim ID vec postoji");
-                return;
-            }
             HashMap<Object,Object> map = (HashMap)((Entity) entity).getAttributes();
             for(Map.Entry entry : map.entrySet()){
                 if(entry.getValue() instanceof Entity){
                     SearchParameters sp2 = new SearchParameters();
+                    sp2.setAndOr("or");
+                    sp2.setEntityId(Integer.toString(((Entity) entry.getValue()).getId()));
                     sp2.setEquals(entry.getKey().toString()+":id:"+((Entity) entry.getValue()).getId());
+                    sp.setEquals(entry.getKey().toString()+":id:"+((Entity)entity).getId());
+                    if(!find(sp,pathToDirectory).isEmpty())
+                    {
+                        System.out.println("Entitet sa datim ID vec postoji");
+                        return false;
+                    }
                     if(!find(sp2,pathToDirectory).isEmpty())
                     {
                         System.out.println("Entitet sa datim ID vec postoji");
-                        return;
+                        return false;
                     }
                 }
+            }
+            if(!find(sp,pathToDirectory).isEmpty())
+            {
+                System.out.println("Entitet sa datim ID vec postoji");
+                return false;
             }
         }
 
@@ -80,17 +89,18 @@ public class JsonDataRepository implements DataRepository {
                 objects.add((Entity) entity);
                 objectMapper.writeValue(new File(pathToDirectory+File.separator+properties.getProperty("lastFileName")), objects);
                 boolean imaUgnjezdeni = false;
-                if (properties.getProperty("autoGenerateId").equals("true"))
-                    for(Map.Entry entry:(((Entity) entity).getAttributes().entrySet())){
-                        if(entry.getValue() instanceof Entity){
+                if (properties.getProperty("autoGenerateId").equals("true")) {
+                    for (Map.Entry entry : (((Entity) entity).getAttributes().entrySet())) {
+                        if (entry.getValue() instanceof Entity) {
                             imaUgnjezdeni = true;
                             break;
                         }
                     }
                     if (imaUgnjezdeni)
-                        editPropertyFile(pathToConfig,"lastAvailableId",Integer.toString(((Entity) entity).getId()+1));
+                        editPropertyFile(pathToConfig, "lastAvailableId", Integer.toString(((Entity) entity).getId() + 1));
                     else
-                        editPropertyFile(pathToConfig,"lastAvailableId",Integer.toString(((Entity) entity).getId()));
+                        editPropertyFile(pathToConfig, "lastAvailableId", Integer.toString(((Entity) entity).getId()));
+                }
             }
             else
             {
@@ -100,8 +110,19 @@ public class JsonDataRepository implements DataRepository {
                 try {
                     objectMapper.writeValue(newFile,objects1);
                     editPropertyFile(pathToConfig,"lastFileName", newFile.getName());
-                    if (properties.getProperty("autoGenerateId").equals("true"))
-                        editPropertyFile(pathToConfig,"lastAvailableId",Integer.toString(((Entity) entity).getId()));
+                    boolean imaUgnjezdeni = false;
+                    if (properties.getProperty("autoGenerateId").equals("true")) {
+                        for (Map.Entry entry : (((Entity) entity).getAttributes().entrySet())) {
+                            if (entry.getValue() instanceof Entity) {
+                                imaUgnjezdeni = true;
+                                break;
+                            }
+                        }
+                        if (imaUgnjezdeni)
+                            editPropertyFile(pathToConfig, "lastAvailableId", Integer.toString(((Entity) entity).getId() + 1));
+                        else
+                            editPropertyFile(pathToConfig, "lastAvailableId", Integer.toString(((Entity) entity).getId()));
+                    }
 
                 } catch (IOException ioException) {
                     ioException.printStackTrace();
@@ -114,13 +135,25 @@ public class JsonDataRepository implements DataRepository {
             objects1.add((Entity)entity);
             try {
                 objectMapper.writeValue(new File(pathToDirectory+File.separator+properties.getProperty("lastFileName")),objects1);
-                if (properties.getProperty("autoGenerateId").equals("true"))
-                    editPropertyFile(pathToConfig,"lastAvailableId",Integer.toString(((Entity) entity).getId()));
+                boolean imaUgnjezdeni = false;
+                if (properties.getProperty("autoGenerateId").equals("true")) {
+                    for (Map.Entry entry : (((Entity) entity).getAttributes().entrySet())) {
+                        if (entry.getValue() instanceof Entity) {
+                            imaUgnjezdeni = true;
+                            break;
+                        }
+                    }
+                    if (imaUgnjezdeni)
+                        editPropertyFile(pathToConfig, "lastAvailableId", Integer.toString(((Entity) entity).getId() + 1));
+                    else
+                        editPropertyFile(pathToConfig, "lastAvailableId", Integer.toString(((Entity) entity).getId()));
+                }
             } catch (IOException ioException) {
                 ioException.printStackTrace();
             }
             //e.printStackTrace();
         }
+        return true;
     }
 
     @Override
@@ -140,8 +173,6 @@ public class JsonDataRepository implements DataRepository {
                 //e.printStackTrace();
             }
         }
-
-
         return result;
     }
 
@@ -152,36 +183,46 @@ public class JsonDataRepository implements DataRepository {
     }
 
     @Override
-    public void delete(String s, int id) {
-        try {
-            List<Entity> objects = objectMapper.readValue(new File(s), new TypeReference<List<Entity>>() {
-            });
-            for(Entity entity : objects){
-                if(entity.getId()==id) {
-                    objects.remove(entity);
-                    break;
+    public void delete(String pathToDirectory, int id) {
+        File directoryPath = new File(pathToDirectory);
+        File filesList[] = directoryPath.listFiles();
+        for(File file:filesList) {
+            try {
+                List<Entity> objects = objectMapper.readValue(file, new TypeReference<List<Entity>>() {
+                });
+                for (Entity entity : objects) {
+                    if (entity.getId() == id) {
+                        objects.remove(entity);
+                        break;
+                    }
                 }
+                objectMapper.writeValue(file, objects);
+                break;
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-            objectMapper.writeValue(new File(s), objects);
-        } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 
     @Override
-    public void update(String s, int id, HashMap<Object,Object> updatedMap) {
-        try {
-            List<Entity> objects = objectMapper.readValue(new File(s), new TypeReference<List<Entity>>() {
-            });
-            for(Entity entity : objects){
-                if(entity.getId()==id) {
-                    updatedMap.forEach((key,value)-> entity.getAttributes().put(key,value));
-                    break;
+    public void update(String pathToDirectory, int id, HashMap<Object,Object> updatedMap) {
+        File directoryPath = new File(pathToDirectory);
+        File filesList[] = directoryPath.listFiles();
+        for(File file:filesList) {
+            try {
+                List<Entity> objects = objectMapper.readValue(file, new TypeReference<List<Entity>>() {
+                });
+                for (Entity entity : objects) {
+                    if (entity.getId() == id) {
+                        updatedMap.forEach((key, value) -> entity.getAttributes().put(key, value));
+                        break;
+                    }
                 }
+                objectMapper.writeValue(file, objects);
+                break;
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-            objectMapper.writeValue(new File(s), objects);
-        } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 

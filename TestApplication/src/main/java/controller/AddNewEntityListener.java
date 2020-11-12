@@ -8,6 +8,7 @@ import view.TablePanel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 public class AddNewEntityListener implements ActionListener {
@@ -40,6 +41,8 @@ public class AddNewEntityListener implements ActionListener {
             String[] keyValue = keysValues.split("=");
             attributes.put(keyValue[0],keyValue[1]);
         }
+        System.out.println("id="+entity.getId()+" name="+entity.getName());
+        System.out.println(attributes);
         //ugnjezdeni entitet
         if(!tablePanel.getUgnjezdeniNameField().getText().equals("")) {
             int ugnjezdeniId;
@@ -56,7 +59,7 @@ public class AddNewEntityListener implements ActionListener {
                 ugnjezdeniAttributes.put(keyValue[0], keyValue[1]);
             }
             ugnjezdeniEntity.setAttributes(ugnjezdeniAttributes);
-
+            System.out.println("id="+ugnjezdeniEntity.getId()+" name="+ugnjezdeniEntity.getName());
             //dodavanje ugnjezdenog u atribute
             attributes.put(ugnjezdeniName, ugnjezdeniEntity);
         }
@@ -64,6 +67,10 @@ public class AddNewEntityListener implements ActionListener {
 
         String pathToDirectory = p.getProperty("pathToDirectory");
         String pathToConfig = MainFrame.getInstance().getPathToConfig();
-        MainFrame.getInstance().getDataRepository().save(pathToDirectory,entity,pathToConfig);
+        System.out.println(attributes);
+        if(MainFrame.getInstance().getDataRepository().save(pathToDirectory,entity,pathToConfig))
+            tableModel.addRow(new Object[]{entity.getId(),entity.getName(),entity.getAttributes()});
+        else
+            System.out.println("ID nije jedinstven");
     }
 }

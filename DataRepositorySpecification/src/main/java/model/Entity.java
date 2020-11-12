@@ -1,6 +1,5 @@
 package model;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Entity {
@@ -44,6 +43,7 @@ public class Entity {
 
     @Override
     public String toString() {
-        return Integer.toString(id);
+        //return Integer.toString(id);
+        return "{"+"id="+id+", name="+name+", attributes="+attributes+"}";
     }
 }

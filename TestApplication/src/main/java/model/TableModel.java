@@ -42,7 +42,7 @@ public class TableModel extends DefaultTableModel {
     @Override
     public void addRow(Object[] arg0) {
         for(Object o : arg0){
-            System.out.println(o);
+            //System.out.println(o);
         }
         super.addRow(arg0);
 

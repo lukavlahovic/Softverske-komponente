@@ -25,7 +25,7 @@ public class Main {
         Class<? extends DataRepository> implementation = (Class<? extends DataRepository>) subTypes.toArray()[0];
         DataRepository dataRepository = implementation.newInstance();
         //Call method using specification
-
+        System.out.println(dataRepository.getClass());
         MainFrame.getInstance();
 
         MainFrame.getInstance().setDataRepository(dataRepository);

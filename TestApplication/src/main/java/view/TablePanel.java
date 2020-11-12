@@ -1,6 +1,9 @@
 package view;
 
 import controller.AddNewEntityListener;
+import controller.DeleteEntityListener;
+import controller.SearchListener;
+import controller.UpdateEntityListener;
 import model.TableModel;
 
 import javax.swing.*;
@@ -11,13 +14,17 @@ public class TablePanel extends JPanel {
 
 
     private Table table;
+    private JScrollPane scrollPane;
     private JPanel editingPanel;
 
     private JButton addButton;
     private JButton deleteButton;
-    private JButton showDetailsButton;
+    private JButton updateButton;
     private JButton importButton;
     private JButton exportButton;
+    private JButton queryButton;
+
+    private JTextArea query;
 
     private JTextField idField;
     private JTextField nameField;
@@ -41,14 +48,16 @@ public class TablePanel extends JPanel {
     }
 
     private void _initEditPanel() {
+        this.scrollPane = new JScrollPane();
         this.editingPanel = new JPanel();
         this.editingPanel.setLayout(new GridLayout(5,5));
 
         this.addButton = new JButton("ADD");
         this.deleteButton = new JButton("DELETE");
-        this.showDetailsButton = new JButton("SHOW DETAILS");
+        this.updateButton = new JButton("UPDATE");
         this.importButton = new JButton("IMPORT");
         this.exportButton = new JButton("EXPORT");
+        this.queryButton = new JButton("SEARCH");
 /*
         EventService eventService = new EventServiceImpl();
         ScheduleImportExport<File> scheduleImportExport = new SheduleImportExportJsonImplementation();
@@ -56,16 +65,26 @@ public class TablePanel extends JPanel {
 
         addButton.addActionListener(new AddNewEventListener((ScheduleTableModel) this.scheduleTable.getModel(), this));
         deleteButton.addActionListener(new DeleteEvenListener((ScheduleTableModel) this.scheduleTable.getModel(), this));
-        importButton.addActionListener(new ImportDataActionListener((ScheduleTableModel) scheduleTable.getModel(), scheduleService));
         exportButton.addActionListener(new ExportDataActionListener((ScheduleTableModel) scheduleTable.getModel(), scheduleService));
 */
-        // Add panel for buttons
         addButton.addActionListener(new AddNewEntityListener((TableModel)table.getModel(),this));
+        queryButton.addActionListener(new SearchListener((TableModel)table.getModel(),this));
+        deleteButton.addActionListener(new DeleteEntityListener((TableModel)table.getModel(),table));
+        updateButton.addActionListener(new UpdateEntityListener((TableModel)table.getModel(),table));
+
+
+        JPanel searchPanel = new JPanel();
+        JLabel queryLabel = new JLabel("Pretraga:");
+        this.query = new JTextArea(5,50);
+        searchPanel.add(queryLabel);
+        searchPanel.add(query);
+        searchPanel.add(queryButton);
+        // Add panel for buttons
         JPanel buttonsPanel = new JPanel();
 
         buttonsPanel.add(addButton);
         buttonsPanel.add(deleteButton);
-        buttonsPanel.add(showDetailsButton);
+        buttonsPanel.add(updateButton);
         buttonsPanel.add(importButton);
         buttonsPanel.add(exportButton);
 
@@ -94,8 +113,10 @@ public class TablePanel extends JPanel {
 
 
         this.editingPanel.add(buttonsPanel, BorderLayout.NORTH);
+        this.editingPanel.add(searchPanel, BorderLayout.NORTH);
         this.editingPanel.add(fieldsPanel, BorderLayout.CENTER);
         this.editingPanel.add(fieldsPanel1, BorderLayout.SOUTH);
+        //this.scrollPane.add(editingPanel);
         this.add(editingPanel, BorderLayout.CENTER);
     }
 
@@ -132,11 +153,11 @@ public class TablePanel extends JPanel {
     }
 
     public JButton getShowDetailsButton() {
-        return showDetailsButton;
+        return updateButton;
     }
 
     public void setShowDetailsButton(JButton showDetailsButton) {
-        this.showDetailsButton = showDetailsButton;
+        this.updateButton = showDetailsButton;
     }
 
     public JButton getImportButton() {
@@ -201,5 +222,29 @@ public class TablePanel extends JPanel {
 
     public void setUgnjezdeniNameField(JTextField ugnjezdeniNameField) {
         this.ugnjezdeniNameField = ugnjezdeniNameField;
+    }
+
+    public JScrollPane getScrollPane() {
+        return scrollPane;
+    }
+
+    public void setScrollPane(JScrollPane scrollPane) {
+        this.scrollPane = scrollPane;
+    }
+
+    public JButton getQueryButton() {
+        return queryButton;
+    }
+
+    public void setQueryButton(JButton queryButton) {
+        this.queryButton = queryButton;
+    }
+
+    public JTextArea getQuery() {
+        return query;
+    }
+
+    public void setQuery(JTextArea query) {
+        this.query = query;
     }
 }
