@@ -1,7 +1,10 @@
 package main;
+import model.Entity;
+import model.TableModel;
 import org.reflections.Reflections;
 import repository.DataRepository;
 
+import java.util.ArrayList;
 import java.util.Set;
 
 public class Main {
@@ -23,7 +26,11 @@ public class Main {
         DataRepository dataRepository = implementation.newInstance();
         //Call method using specification
 
+        MainFrame.getInstance();
 
         MainFrame.getInstance().setDataRepository(dataRepository);
+        MainFrame.getInstance().setPathToConfig("D:\\app.properties");
+        MainFrame.getInstance().load();
+        //tableModel.loadRepository();
     }
 }

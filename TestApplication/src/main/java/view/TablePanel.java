@@ -1,6 +1,10 @@
 package view;
 
+import controller.AddNewEntityListener;
+import model.TableModel;
+
 import javax.swing.*;
+import javax.swing.border.Border;
 import java.awt.*;
 
 public class TablePanel extends JPanel {
@@ -17,14 +21,17 @@ public class TablePanel extends JPanel {
 
     private JTextField idField;
     private JTextField nameField;
-    private JTextField attributesField;
+    private JTextArea attributesField;
 
+    private JTextField ugnjezdeniIdField;
+    private JTextField ugnjezdeniNameField;
+    private JTextArea ugnjezdeniAttributesField;
 
     public TablePanel() {
         super();
         this.setSize(400, 400);
-
         table = new Table();
+        //((TableModel)table.getModel()).loadRepository();
         this.setLayout(new BorderLayout());
         JScrollPane scrollPane = new JScrollPane(table);
         this.add(scrollPane, BorderLayout.NORTH);
@@ -35,7 +42,7 @@ public class TablePanel extends JPanel {
 
     private void _initEditPanel() {
         this.editingPanel = new JPanel();
-        this.editingPanel.setLayout(new BorderLayout());
+        this.editingPanel.setLayout(new GridLayout(5,5));
 
         this.addButton = new JButton("ADD");
         this.deleteButton = new JButton("DELETE");
@@ -53,6 +60,7 @@ public class TablePanel extends JPanel {
         exportButton.addActionListener(new ExportDataActionListener((ScheduleTableModel) scheduleTable.getModel(), scheduleService));
 */
         // Add panel for buttons
+        addButton.addActionListener(new AddNewEntityListener((TableModel)table.getModel(),this));
         JPanel buttonsPanel = new JPanel();
 
         buttonsPanel.add(addButton);
@@ -64,15 +72,30 @@ public class TablePanel extends JPanel {
         JPanel fieldsPanel = new JPanel();
         this.idField = new JTextField("ID", 20);
         this.nameField = new JTextField("Name", 20);
-        this.attributesField = new JTextField("Attributes", 20);
-
+        this.attributesField = new JTextArea(10, 50);
         fieldsPanel.add(idField);
         fieldsPanel.add(nameField);
         fieldsPanel.add(attributesField);
 
+        JPanel fieldsPanel1 = new JPanel();
+        this.ugnjezdeniIdField = new JTextField("Ugnjezdeni ID", 20);
+        this.ugnjezdeniNameField = new JTextField("Ugnjezdeni Name", 20);
+        this.ugnjezdeniAttributesField = new JTextArea(10,50);
+        fieldsPanel1.add(ugnjezdeniIdField);
+        fieldsPanel1.add(ugnjezdeniNameField);
+        fieldsPanel1.add(ugnjezdeniAttributesField);
 
-        this.editingPanel.add(buttonsPanel, BorderLayout.CENTER);
-        this.editingPanel.add(fieldsPanel, BorderLayout.SOUTH);
+        //obojili ivice textarea u crna
+        Border border = BorderFactory.createLineBorder(Color.BLACK);
+        attributesField.setBorder(BorderFactory.createCompoundBorder(border,
+                BorderFactory.createEmptyBorder(10, 10, 10, 10)));
+        ugnjezdeniAttributesField.setBorder(BorderFactory.createCompoundBorder(border,
+                BorderFactory.createEmptyBorder(10, 10, 10, 10)));
+
+
+        this.editingPanel.add(buttonsPanel, BorderLayout.NORTH);
+        this.editingPanel.add(fieldsPanel, BorderLayout.CENTER);
+        this.editingPanel.add(fieldsPanel1, BorderLayout.SOUTH);
         this.add(editingPanel, BorderLayout.CENTER);
     }
 
@@ -148,11 +171,35 @@ public class TablePanel extends JPanel {
         this.nameField = nameField;
     }
 
-    public JTextField getAttributesField() {
+    public JTextArea getAttributesField() {
         return attributesField;
     }
 
-    public void setAttributesField(JTextField attributesField) {
+    public void setAttributesField(JTextArea attributesField) {
         this.attributesField = attributesField;
+    }
+
+    public JTextArea getUgnjezdeniAttributesField() {
+        return ugnjezdeniAttributesField;
+    }
+
+    public void setUgnjezdeniAttributesField(JTextArea ugnjezdeniAttributesField) {
+        this.ugnjezdeniAttributesField = ugnjezdeniAttributesField;
+    }
+
+    public JTextField getUgnjezdeniIdField() {
+        return ugnjezdeniIdField;
+    }
+
+    public void setUgnjezdeniIdField(JTextField ugnjezdeniIdField) {
+        this.ugnjezdeniIdField = ugnjezdeniIdField;
+    }
+
+    public JTextField getUgnjezdeniNameField() {
+        return ugnjezdeniNameField;
+    }
+
+    public void setUgnjezdeniNameField(JTextField ugnjezdeniNameField) {
+        this.ugnjezdeniNameField = ugnjezdeniNameField;
     }
 }

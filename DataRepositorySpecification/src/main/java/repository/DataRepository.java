@@ -26,7 +26,7 @@ public interface DataRepository {
      * @param type       type of the object
      * @return object with specified id
      */
-    ArrayList<Entity> find(SearchParameters parameters);
+    ArrayList<Entity> find(SearchParameters parameters, String pathToDirectory);
 
     /**
      * Get all objects from specified collection

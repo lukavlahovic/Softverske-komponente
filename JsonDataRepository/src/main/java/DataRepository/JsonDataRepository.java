@@ -59,6 +59,18 @@ public class JsonDataRepository implements DataRepository {
                 System.out.println("Entitet sa datim ID vec postoji");
                 return;
             }
+            HashMap<Object,Object> map = (HashMap)((Entity) entity).getAttributes();
+            for(Map.Entry entry : map.entrySet()){
+                if(entry.getValue() instanceof Entity){
+                    SearchParameters sp2 = new SearchParameters();
+                    sp2.setEquals(entry.getKey().toString()+":id:"+((Entity) entry.getValue()).getId());
+                    if(!find(sp2,pathToDirectory).isEmpty())
+                    {
+                        System.out.println("Entitet sa datim ID vec postoji");
+                        return;
+                    }
+                }
+            }
         }
 
         try {
@@ -67,8 +79,18 @@ public class JsonDataRepository implements DataRepository {
             if(objects.size()<(Integer.parseInt(properties.getProperty("limitPerFile")))) {
                 objects.add((Entity) entity);
                 objectMapper.writeValue(new File(pathToDirectory+File.separator+properties.getProperty("lastFileName")), objects);
+                boolean imaUgnjezdeni = false;
                 if (properties.getProperty("autoGenerateId").equals("true"))
-                    editPropertyFile(pathToConfig,"lastAvailableId",Integer.toString(((Entity) entity).getId()));
+                    for(Map.Entry entry:(((Entity) entity).getAttributes().entrySet())){
+                        if(entry.getValue() instanceof Entity){
+                            imaUgnjezdeni = true;
+                            break;
+                        }
+                    }
+                    if (imaUgnjezdeni)
+                        editPropertyFile(pathToConfig,"lastAvailableId",Integer.toString(((Entity) entity).getId()+1));
+                    else
+                        editPropertyFile(pathToConfig,"lastAvailableId",Integer.toString(((Entity) entity).getId()));
             }
             else
             {
